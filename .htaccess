@@ -1,0 +1,34 @@
+# Admin Folder Security Configuration
+# Place this file in the admin/ folder
+
+# Prevent directory listing
+Options -Indexes
+
+# Deny access to sensitive files
+<FilesMatch "\.(ini|log|sql|bak|old)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Optional: Restrict access by IP (uncomment and add your IP)
+# <Limit GET POST>
+#     Order Deny,Allow
+#     Deny from all
+#     Allow from 127.0.0.1
+#     Allow from YOUR_IP_ADDRESS
+# </Limit>
+
+# Prevent access to config files
+<Files "config.php">
+    Order allow,deny
+    Deny from all
+</Files>
+
+# Set default charset
+AddDefaultCharset UTF-8
+
+# PHP security settings (if allowed)
+<IfModule mod_php7.c>
+    php_flag display_errors Off
+    php_flag log_errors On
+</IfModule>
