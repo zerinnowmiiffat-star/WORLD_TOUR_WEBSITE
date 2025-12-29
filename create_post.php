@@ -7,8 +7,9 @@ $success = '';
 $error = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $location = sanitize($_POST['location']);
-    $description = sanitize($_POST['description']);
+    // Sanitize inputs (assuming sanitize() is defined in config.php)
+    $location = isset($_POST['location']) ? sanitize($_POST['location']) : '';
+    $description = isset($_POST['description']) ? sanitize($_POST['description']) : '';
     $image = '';
     
     // Validate inputs
@@ -17,6 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else {
         // Handle image upload
         if (isset($_FILES['image']) && $_FILES['image']['error'] === 0) {
+            // Assuming uploadImage() is defined in config.php
             $upload = uploadImage($_FILES['image']);
             if ($upload['success']) {
                 $image = $upload['filename'];
@@ -27,17 +29,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
         if (empty($error)) {
             // Insert post
-            $stmt = $conn->prepare("INSERT INTO post (user_id, location, description, image) VALUES (?, ?, ?, ?)");
-            $stmt->bind_param("isss", $_SESSION['user_id'], $location, $description, $image);
+            $query = "INSERT INTO post (user_id, location, description, image) VALUES (?, ?, ?, ?)";
             
-            if ($stmt->execute()) {
-                $success = "Post created successfully!";
-                // Redirect to posts page after 2 seconds
-                header("refresh:2;url=posts.php");
+            if ($stmt = $conn->prepare($query)) {
+                $stmt->bind_param("isss", $_SESSION['user_id'], $location, $description, $image);
+                
+                if ($stmt->execute()) {
+                    $success = "Post created successfully!";
+                    // Redirect to posts page after 2 seconds
+                    header("refresh:2;url=posts.php");
+                } else {
+                    $error = "Error creating post: " . $stmt->error;
+                }
+                $stmt->close();
             } else {
-                $error = "Error creating post: " . $stmt->error;
+                // Handle preparation error (e.g., table doesn't exist)
+                $error = "Database error: " . $conn->error;
             }
-            $stmt->close();
         }
     }
 }
@@ -291,7 +299,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <li><a href="gifts.php">Gifts</a></li>
                 <li><a href="create_post.php">Share Story</a></li>
                 <li><a href="profile.php">Profile</a></li>
-                <?php if (isAdmin()): ?>
+                <?php if (function_exists('isAdmin') && isAdmin()): ?>
                     <li><a href="admin/">Admin</a></li>
                 <?php endif; ?>
                 <li><a href="logout.php">Logout</a></li>
@@ -321,7 +329,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
             <?php endif; ?>
             
-            <!-- FIXED: Changed action from upload.php to empty (submits to same page) -->
             <form method="POST" action="" enctype="multipart/form-data" id="postForm">
                 <div class="form-group">
                     <label class="form-label">
@@ -369,7 +376,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <span class="file-name" id="fileName">No file chosen</span>
                     </div>
                     <div class="form-help">Optional: Add a photo to your story (max 5MB)</div>
-                    <img id="imagePreview" class="image-preview" style="display:none;">
+                    <img id="imagePreview" class="image-preview" style="display:none;" alt="Preview">
                 </div>
                 
                 <button type="submit" class="btn" id="submitBtn">
@@ -385,11 +392,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         const charCount = document.getElementById('charCount');
         
         function updateCharCount() {
-            charCount.textContent = description.value.length;
+            if (description && charCount) {
+                charCount.textContent = description.value.length;
+            }
         }
         
-        description.addEventListener('input', updateCharCount);
-        updateCharCount();
+        if (description) {
+            description.addEventListener('input', updateCharCount);
+            updateCharCount();
+        }
         
         // Image preview
         function previewImage(input) {
@@ -412,12 +423,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         
         // Form validation
-        document.getElementById('postForm').addEventListener('submit', function(e) {
-            const submitBtn = document.getElementById('submitBtn');
-            submitBtn.disabled = true;
-            submitBtn.textContent = '📤 Publishing...';
-        });
+        const form = document.getElementById('postForm');
+        if (form) {
+            form.addEventListener('submit', function(e) {
+                const submitBtn = document.getElementById('submitBtn');
+                if (submitBtn) {
+                    submitBtn.disabled = true;
+                    submitBtn.textContent = '📤 Publishing...';
+                }
+            });
+        }
     </script>
 </body>
 </html>
-<?php $conn->close(); ?>
+<?php 
+if (isset($conn) && $conn) {
+    $conn->close(); 
+}
+?>
