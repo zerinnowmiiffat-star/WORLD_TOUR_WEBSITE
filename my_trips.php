@@ -332,6 +332,7 @@ $trips = $conn->query($trips_query);
                 <li><a href="destinations.php">Destinations</a></li>
                 <li><a href="posts.php">Travel Stories</a></li>
                 <li><a href="gifts.php">Gifts</a></li>
+                <li><a href="hotels.php">Hotels</a></li> <!-- ADD THIS LINE -->
                 <li><a href="my_trips.php">My Trips</a></li>
                 <li><a href="create_post.php">Share Story</a></li>
                 <li><a href="profile.php">Profile</a></li>

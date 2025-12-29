@@ -361,6 +361,7 @@ $total_destinations = $conn->query("SELECT COUNT(*) as count FROM destination_co
             <ul class="nav-links">
                 <li><a href="index.php">Home</a></li>
                 <li><a href="destinations.php">Destinations</a></li>
+                <li><a href="hotels.php">Hotels</a></li>
                 <li><a href="posts.php">Travel Stories</a></li>
                 <?php if (isLoggedIn()): ?>
                     <li><a href="my_trips.php">My Trips</a></li>

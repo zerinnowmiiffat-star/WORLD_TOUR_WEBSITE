@@ -1,43 +1,5 @@
 
 
-<?php
-// login.php
-require_once 'config.php';
-
-$error = '';
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $conn = getDBConnection();
-    
-    $email = sanitize($_POST['email']);
-    $password = $_POST['password'];
-    
-    $stmt = $conn->prepare("SELECT id, name, password, user_type FROM user WHERE email = ?");
-    $stmt->bind_param("s", $email);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    
-    if ($result->num_rows === 1) {
-        $user = $result->fetch_assoc();
-        
-        if (password_verify($password, $user['password'])) {
-            $_SESSION['user_id'] = $user['id'];
-            $_SESSION['user_name'] = $user['name'];
-            $_SESSION['user_type'] = $user['user_type'];
-            
-            header("Location: index.php");
-            exit();
-        } else {
-            $error = "Invalid email or password";
-        }
-    } else {
-        $error = "Invalid email or password";
-    }
-    
-    $stmt->close();
-    $conn->close();
-}
-?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -154,11 +116,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="auth-container">
         <h1 class="auth-title">Welcome Back</h1>
         
-        <?php if ($error): ?>
+        <!-- <?php if ($error): ?>
             <div class="error"><?= $error ?></div>
-        <?php endif; ?>
+        <?php endif; ?> -->
         
-        <form method="POST" action="">
+        <form method="POST" action="login_validate.php">
             <div class="form-group">
                 <label class="form-label">Email</label>
                 <input type="email" name="email" class="form-input" required>
@@ -183,4 +145,3 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </body>
 </html>
 
-<?php?>

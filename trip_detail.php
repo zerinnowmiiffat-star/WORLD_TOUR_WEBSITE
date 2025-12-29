@@ -456,7 +456,7 @@ $places = $conn->query($places_query);
                             <?php endif; ?>
                             
                             <a href="destination_detail.php?country=<?= urlencode($dest['country_name']) ?>" 
-                               style="display:block;text-align:center;margin-top:1rem;color:#667eea;text-decoration:none;font-weight:500;">
+                                style="display:block;text-align:center;margin-top:1rem;color:#667eea;text-decoration:none;font-weight:500;">
                                 View Full Details →
                             </a>
                         </div>

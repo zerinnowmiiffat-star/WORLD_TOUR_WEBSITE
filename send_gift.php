@@ -284,6 +284,7 @@ if ($trip_id > 0) {
             <ul class="nav-links">
                 <li><a href="index.php">Home</a></li>
                 <li><a href="destinations.php">Destinations</a></li>
+                <li><a href="hotels.php">Hotels</a></li>
                 <li><a href="posts.php">Travel Stories</a></li>
                 <li><a href="my_trips.php">My Trips</a></li>
                 <li><a href="gifts.php">Gifts</a></li>

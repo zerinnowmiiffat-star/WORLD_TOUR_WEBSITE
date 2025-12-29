@@ -247,6 +247,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             font-size: 1rem;
             font-weight: bold;
             transition: transform 0.3s;
+            width: 100%;
         }
         
         .btn:hover {
@@ -270,6 +271,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             .card {
                 padding: 2rem 1.5rem;
             }
+            
+            .nav-links {
+                display: none;
+            }
         }
     </style>
 </head>
@@ -280,10 +285,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <ul class="nav-links">
                 <li><a href="index.php">Home</a></li>
                 <li><a href="destinations.php">Destinations</a></li>
+                <li><a href="hotels.php">Hotels</a></li>
                 <li><a href="posts.php">Travel Stories</a></li>
-                <li><a href="gifts.php">Gifts</a></li>
                 <li><a href="my_trips.php">My Trips</a></li>
+                <li><a href="gifts.php">Gifts</a></li>
+                <li><a href="create_post.php">Share Story</a></li>
                 <li><a href="profile.php">Profile</a></li>
+                <?php if (isAdmin()): ?>
+                    <li><a href="admin/">Admin</a></li>
+                <?php endif; ?>
                 <li><a href="logout.php">Logout</a></li>
             </ul>
         </div>
@@ -311,6 +321,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
             <?php endif; ?>
             
+            <!-- FIXED: Changed action from upload.php to empty (submits to same page) -->
             <form method="POST" action="" enctype="multipart/form-data" id="postForm">
                 <div class="form-group">
                     <label class="form-label">

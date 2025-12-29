@@ -38,7 +38,38 @@ $total_trips = $conn->query("SELECT COUNT(*) as count FROM trip_plan")->fetch_as
             line-height: 1.6;
             color: #333;
         }
-        
+        .hotels-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .hotel-card {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+
+        .hotel-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .hotel-icon {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+            font-size: 3rem;
+        }
+
+        .rating {
+            color: #ffc107;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
         /* Navbar */
         .navbar {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -401,6 +432,7 @@ $total_trips = $conn->query("SELECT COUNT(*) as count FROM trip_plan")->fetch_as
             <ul class="nav-links">
                 <li><a href="index.php">Home</a></li>
                 <li><a href="destinations.php">Destinations</a></li>
+                <li><a href="hotels.php">Hotels</a></li>
                 <li><a href="posts.php">Travel Stories</a></li>
                 <?php if (isLoggedIn()): ?>
                     <li><a href="my_trips.php">My Trips</a></li>
@@ -568,7 +600,72 @@ $total_trips = $conn->query("SELECT COUNT(*) as count FROM trip_plan")->fetch_as
         </div>
     </section>
     <?php endif; ?>
+<!-- Featured Hotels Section (Add before footer) -->
+<?php
+$featured_hotels = $conn->query("SELECT h.*, tp.country_name,
+                                (SELECT AVG(rating) FROM review WHERE hotel_code = h.hotel_code) as avg_review,
+                                (SELECT COUNT(*) FROM review WHERE hotel_code = h.hotel_code) as review_count
+                                FROM hotel h 
+                                LEFT JOIN tourist_place tp ON h.place_name = tp.place_name
+                                WHERE h.rating >= 4.5
+                                ORDER BY h.rating DESC
+                                LIMIT 6");
+?>
 
+<div class="container" style="background:#fff;max-width:100%;padding:4rem 2rem;">
+    <div style="max-width:1200px;margin:0 auto;">
+        <div class="section-header">
+            <h2 class="section-title">🏨 Top Rated Hotels</h2>
+            <p class="section-subtitle">Discover the best accommodations worldwide</p>
+        </div>
+        
+        <div class="grid">
+            <?php while ($hotel = $featured_hotels->fetch_assoc()): ?>
+                <div class="card">
+                    <div style="background:linear-gradient(135deg, #667eea 0%, #764ba2 100%);color:white;padding:2rem;text-align:center;font-size:3rem;">
+                        🏨
+                    </div>
+                    <div style="padding:1.5rem;">
+                        <h3 style="font-size:1.3rem;margin-bottom:0.5rem;">
+                            <?= htmlspecialchars($hotel['hotel_name']) ?>
+                        </h3>
+                        <p style="color:#666;margin-bottom:1rem;">
+                            📍 <?= htmlspecialchars($hotel['place_name']) ?>
+                            <?php if ($hotel['country_name']): ?>
+                                , <?= htmlspecialchars($hotel['country_name']) ?>
+                            <?php endif; ?>
+                        </p>
+                        
+                        <?php if ($hotel['avg_review']): ?>
+                            <div style="color:#ffc107;margin-bottom:1rem;">
+                                <?= str_repeat('⭐', round($hotel['avg_review'])) ?> 
+                                <?= number_format($hotel['avg_review'], 1) ?>
+                                <span style="color:#999;">(<?= $hotel['review_count'] ?> reviews)</span>
+                            </div>
+                        <?php endif; ?>
+                        
+                        <?php if ($hotel['price_range']): ?>
+                            <p style="color:#666;margin-bottom:1rem;">
+                                💰 <?= htmlspecialchars($hotel['price_range']) ?>
+                            </p>
+                        <?php endif; ?>
+                        
+                        <a href="hotel_detail.php?id=<?= $hotel['hotel_code'] ?>" 
+                        style="display:block;text-align:center;padding:0.7rem;background:#667eea;color:white;text-decoration:none;border-radius:8px;">
+                        View & Review
+                        </a>
+                    </div>
+                </div>
+            <?php endwhile; ?>
+        </div>
+        
+        <div class="view-all-link">
+            <a href="hotels.php">
+                View All Hotels <span>→</span>
+            </a>
+        </div>
+    </div>
+</div>
     <!-- Footer -->
     <footer class="footer">
         <div class="footer-content">

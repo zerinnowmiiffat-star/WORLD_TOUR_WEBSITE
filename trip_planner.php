@@ -88,24 +88,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             text-decoration: none;
         }
         
-        /* NEW: Added navigation links styling */
-        .nav-links {
-            display: flex;
-            gap: 2rem;
-            list-style: none;
-        }
-        
-        .nav-links a {
-            color: white;
-            text-decoration: none;
-            transition: opacity 0.3s;
-            font-weight: 500;
-        }
-        
-        .nav-links a:hover {
-            opacity: 0.8;
-        }
-        
         .container {
             max-width: 800px;
             margin: 2rem auto;
@@ -216,34 +198,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         .required {
             color: red;
         }
-        
-        /* NEW: Mobile responsive navigation */
-        @media (max-width: 768px) {
-            .nav-links {
-                display: none;
-            }
-        }
     </style>
 </head>
 <body>
-    <!-- UPDATED NAVIGATION SECTION -->
     <nav class="navbar">
         <div class="navbar-content">
             <a href="index.php" class="logo">🌍 World Tour</a>
-            <!-- NEW: Added full navigation menu -->
-            <ul class="nav-links">
-                <li><a href="index.php">Home</a></li>
-                <li><a href="destinations.php">Destinations</a></li>
-                <li><a href="posts.php">Travel Stories</a></li>
-                <li><a href="my_trips.php">My Trips</a></li>
-                <li><a href="gifts.php">Gifts</a></li>
-                <li><a href="create_post.php">Share Story</a></li>
-                <li><a href="profile.php">Profile</a></li>
-                <?php if (isAdmin()): ?>
-                    <li><a href="admin/">Admin</a></li>
-                <?php endif; ?>
-                <li><a href="logout.php">Logout</a></li>
-            </ul>
+            <a href="my_trips.php" style="color:white;text-decoration:none;">My Trips</a>
         </div>
     </nav>
 
